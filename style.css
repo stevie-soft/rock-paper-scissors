@@ -48,6 +48,17 @@ body {
   gap: 40px;
 }
 
+.choice img {
+  width: 75px;
+  height: 75px;
+  transition: 0.1s all;
+}
+
+.choice img:hover {
+  cursor: pointer;
+  transform: scale(1.4);
+}
+
 .actions-area {
   display: flex;
   justify-content: center;
@@ -147,17 +158,6 @@ body {
   pointer-events: none;
   transition: 0.1s ease-out;
   line-height: 100px;
-}
-
-.choice img {
-  width: 75px;
-  height: 75px;
-  transition: 0.1s all;
-}
-
-.choice img:hover {
-  cursor: pointer;
-  transform: scale(1.4);
 }
 
 .bordered {

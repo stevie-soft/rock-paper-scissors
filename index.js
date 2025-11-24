@@ -47,9 +47,28 @@ function getImagePath(filename) {
 
 const context = {
   maxWins: 3,
-  totalWins: 0,
+  ties: 0,
   playerWins: 0,
   computerWins: 0,
+};
+
+const emojiByResult = {
+  WINS: {
+    1: "😊",
+    2: "😁👍",
+    3: "😎👌",
+  },
+  TIES: {
+    1: "😐",
+    2: "😒",
+    3: "🥱",
+    4: "😴",
+  },
+  LOSES: {
+    1: "😳",
+    2: "😨",
+    3: "😞",
+  },
 };
 
 function resetGame() {
@@ -142,14 +161,21 @@ function determineWinner(playerChoice, computerChoice) {
     winnerHandArea = playerHandArea;
     winnerWinsCounter = playerWinsCounter;
     context.playerWins++;
-    announcement.innerHTML = "Nyertél! 😎";
+
+    const emoji = emojiByResult.WINS[context.playerWins];
+    announcement.innerHTML = `Nyertél! ${emoji}`;
   } else if (computerChoice.beats === playerChoice.key) {
     winnerHandArea = computerHandArea;
     winnerWinsCounter = computerWinsCounter;
     context.computerWins++;
-    announcement.innerHTML = "Vesztettél! 😞";
+
+    const emoji = emojiByResult.LOSES[context.computerWins];
+    announcement.innerHTML = `Vesztettél!  ${emoji}`;
   } else {
-    announcement.innerHTML = "Döntetlen! 😐";
+    context.ties++;
+
+    const emoji = emojiByResult.TIES?.[context.ties] ?? "💤";
+    announcement.innerHTML = `Döntetlen!  ${emoji}`;
   }
 
   if (winnerHandArea && winnerWinsCounter) {
