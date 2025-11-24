@@ -74,6 +74,7 @@ const emojiByResult = {
 function resetGame() {
   playerHandArea.classList.remove("winner-hand");
   computerHandArea.classList.remove("winner-hand");
+  context.ties = 0;
   context.playerWins = 0;
   context.computerWins = 0;
   announcement.innerHTML = "Készen állsz?";
