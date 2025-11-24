@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>RPS - The Game</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" href="./public/images/app-logo.png" type="image/x-icon" />
+    <link href="https://fonts.cdnfonts.com/css/something" rel="stylesheet" />
+    <link href="https://fonts.cdnfonts.com/css/advent-pro" rel="stylesheet" />
+  </head>
+  <body>
+    <main>
+      <div class="game-banner">
+        <span>Kő - Papír - Olló</span>
+      </div>
+      <div class="game-area">
+        <div class="spacing"></div>
+        <div class="announcement" id="announcement">Készen állsz?</div>
+
+        <div class="hands-area">
+          <div class="profile bordered">
+            <div class="title">Játékos</div>
+            <img
+              id="playerProfileImage"
+              src="public/images/player-profile.png"
+            />
+            <div class="stats-area">
+              <span id="playerWinsCounter">0/0</span>
+              <img src="public/images/wins-badge.png" />
+            </div>
+          </div>
+          <div id="playerHandArea" class="player-hand">
+            <img
+              id="playerImg"
+              src="public/images/player-hand-rock.png"
+              alt="Player"
+            />
+          </div>
+
+          <div id="computerHandArea" class="computer-hand">
+            <img
+              id="computerImg"
+              src="public/images/computer-hand-rock.png"
+              alt="Computer"
+            />
+          </div>
+          <div class="profile bordered">
+            <div class="title">Számítógép</div>
+            <img
+              id="computerProfileImage"
+              src="public/images/computer-profile.png"
+            />
+            <div class="stats-area">
+              <span id="computerWinsCounter">0/0</span>
+              <img src="public/images/wins-badge.png" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="choicesBox" class="choices-area">
+        <div id="choiceRock" class="choice">
+          <img src="public/images/choice-rock.png" />
+        </div>
+        <div id="choicePaper" class="choice">
+          <img src="public/images/choice-paper.png" />
+        </div>
+        <div id="choiceScissors" class="choice">
+          <img src="public/images/choice-scissor.png" />
+        </div>
+      </div>
+
+      <div id="actionsBox" class="actions-area">
+        <button id="newGameButton">Új játék</button>
+      </div>
+    </main>
+    <script src="index.js" type="module"></script>
+  </body>
+</html>

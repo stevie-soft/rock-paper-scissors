@@ -1,0 +1,203 @@
+:root {
+  --banner-color: #3d4047;
+  --bg-color: #1f2022;
+  --text-color: #e0e4eb;
+  --border-color: #3d4047;
+  --font-family: "Advent Pro", sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  font-family: var(--font-family);
+}
+
+.game-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--banner-color);
+  padding: 10px;
+  box-shadow: 3px 5px 40px 10px #181818;
+}
+
+.game-banner span {
+  color: var(--text-color);
+  font-size: 5rem;
+}
+
+.game-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hands-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  gap: 40px;
+}
+
+.choices-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.actions-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.player-hand img,
+.computer-hand img {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  transition: transform 0.15s ease-out;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  gap: 25px;
+}
+
+.profile .title {
+  color: var(--text-color);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.profile img {
+  width: 200px;
+  height: 200px;
+}
+
+.stats-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.stats-area span {
+  color: var(--text-color);
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.stats-area img {
+  width: 50px;
+  height: 50px;
+}
+
+.player-shake {
+  animation: player-shake 0.5s ease-in-out;
+}
+
+.computer-shake {
+  animation: computer-shake 0.5s ease-in-out;
+}
+
+@keyframes player-shake {
+  0% {
+    transform: translateY(0) translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-20px) translateX(-10px) rotate(-30deg);
+  }
+  75% {
+    transform: translateY(-20px) translateX(-10px) rotate(-30deg);
+  }
+  100% {
+    transform: translateY(0) translateX(0px) rotate(0deg);
+  }
+}
+
+@keyframes computer-shake {
+  0% {
+    transform: translateY(0) translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px) rotate(30deg);
+  }
+  75% {
+    transform: translateY(-20px) translateX(10px) rotate(30deg);
+  }
+  100% {
+    transform: translateY(0) translateX(0px) rotate(0deg);
+  }
+}
+
+/* Big countdown text */
+.announcement {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--text-color);
+  pointer-events: none;
+  transition: 0.1s ease-out;
+  line-height: 100px;
+}
+
+.choice img {
+  width: 75px;
+  height: 75px;
+  transition: 0.1s all;
+}
+
+.choice img:hover {
+  cursor: pointer;
+  transform: scale(1.4);
+}
+
+.bordered {
+  border-color: var(--border-color);
+  border-width: 0.6rem;
+  border-style: solid;
+  border-radius: 25px;
+}
+
+.winner-hand {
+  background: #52bd0b;
+  border-radius: 50%;
+  display: block;
+  transition: 0.5 ease-in-out;
+}
+
+.spacing {
+  height: 25px;
+}
+
+#actionsBox {
+  opacity: 0;
+}
+
+#newGameButton {
+  font-size: 4rem;
+  border-radius: 25px;
+  padding: 15px;
+  font-family: var(--font-family);
+  transition: 0.2s all;
+}
+
+#newGameButton:hover {
+  cursor: pointer;
+  background-color: var(--banner-color);
+  color: var(--text-color);
+}
+
+#newGameButton:disabled {
+  cursor: progress;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
