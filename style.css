@@ -32,6 +32,14 @@ body {
   font-size: 1rem;
 }
 
+.game-banner a {
+  color: var(--text-color);
+}
+
+.game-banner a:visited {
+  color: var(--text-color);
+}
+
 .game-area {
   display: flex;
   flex-direction: column;
