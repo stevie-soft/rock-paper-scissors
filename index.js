@@ -1,3 +1,10 @@
+const Util = {
+  sleep: async (milliseconds) =>
+    await new Promise((resolve) => setTimeout(resolve, milliseconds)),
+  getImagePath: (filename) => `/public/images/${filename}`,
+  getRandom: (array) => array[Math.floor(Math.random() * array.length)],
+};
+
 const ChoiceKey = {
   ROCK: "ROCK",
   PAPER: "PAPER",
@@ -27,174 +34,325 @@ const choiceMap = {
 
 const CHOICES = Object.values(choiceMap);
 
-const playerImg = document.getElementById("playerImg");
-const computerImg = document.getElementById("computerImg");
-const announcement = document.getElementById("announcement");
-const newGameButton = document.getElementById("newGameButton");
-const playerHandArea = document.getElementById("playerHandArea");
-const computerHandArea = document.getElementById("computerHandArea");
-const playerWinsCounter = document.getElementById("playerWinsCounter");
-const computerWinsCounter = document.getElementById("computerWinsCounter");
-const choicesBox = document.getElementById("choicesBox");
-const actionsBox = document.getElementById("actionsBox");
-const choiceRock = document.getElementById("choiceRock");
-const choicePaper = document.getElementById("choicePaper");
-const choiceScissors = document.getElementById("choiceScissors");
-
-function getImagePath(filename) {
-  return `/public/images/${filename}`;
-}
-
-const context = {
-  maxWins: 3,
-  ties: 0,
-  playerWins: 0,
-  computerWins: 0,
-};
-
-const emojiByResult = {
-  WINS: {
-    1: "😊",
-    2: "😁👍",
-    3: "😎👌",
-  },
-  TIES: {
-    1: "😐",
-    2: "😒",
-    3: "🥱",
-    4: "😴",
-  },
-  LOSES: {
-    1: "😳",
-    2: "😨",
-    3: "😞",
-  },
-};
-
-function resetGame() {
-  playerHandArea.classList.remove("winner-hand");
-  computerHandArea.classList.remove("winner-hand");
-  context.ties = 0;
-  context.playerWins = 0;
-  context.computerWins = 0;
-  announcement.innerHTML = "Készen állsz?";
-
-  updateUi();
-}
-
-function updateUi() {
-  if (
-    context.playerWins === context.maxWins ||
-    context.computerWins === context.maxWins
-  ) {
-    choicesBox.style.opacity = 0;
-    actionsBox.style.opacity = 1;
-  } else {
-    choicesBox.style.opacity = 1;
-    actionsBox.style.opacity = 0;
+class Hand {
+  constructor(prefix) {
+    this.prefix = prefix;
+    this.choice = null;
   }
 
-  playerWinsCounter.innerHTML = `${context.playerWins}/${context.maxWins}`;
-  computerWinsCounter.innerHTML = `${context.computerWins}/${context.maxWins}`;
+  get imageElement() {
+    return document.getElementById(`${this.prefix}HandImg`);
+  }
+
+  get areaElement() {
+    return document.getElementById(`${this.prefix}HandBox`);
+  }
+
+  revealChoice() {
+    const imageName = `${this.prefix}-${this.choice.image}`;
+    this.imageElement.src = Util.getImagePath(imageName);
+  }
+
+  markAsWinner() {
+    this.areaElement.classList.add("winner-hand");
+  }
+
+  removeWinnerMarker() {
+    this.areaElement.classList.remove("winner-hand");
+  }
+
+  startShaking() {
+    this.imageElement.classList.add(`${this.prefix}-shake`);
+  }
+
+  stopShaking() {
+    this.imageElement.classList.remove(`${this.prefix}-shake`);
+  }
+
+  async bounce() {
+    this.imageElement.style.transform = "scale(1.2)";
+
+    await Util.sleep(300);
+
+    this.imageElement.style.transform = "";
+  }
+
+  reset() {
+    this.choice = null;
+    this.imageElement.src = Util.getImagePath(`${this.prefix}-hand-rock.png`);
+    this.removeWinnerMarker();
+  }
 }
 
-async function playRound(playerChoice) {
-  choicesBox.style.opacity = 0;
-  playerHandArea.classList.remove("winner-hand");
-  computerHandArea.classList.remove("winner-hand");
+class HandsManager {
+  constructor() {
+    this.userHand = new Hand("user");
+    this.computerHand = new Hand("computer");
+  }
 
-  const computerChoice = getRandom(CHOICES);
+  async shake() {
+    this.userHand.startShaking();
+    this.computerHand.startShaking();
 
-  playerImg.src = getImagePath("player-hand-rock.png");
-  computerImg.src = getImagePath("computer-hand-rock.png");
-  playerImg.classList.remove("shake");
-  computerImg.classList.remove("shake");
+    await Util.sleep(600);
 
-  const texts = ["Kő...", "Papír...", "Ol...", "...ló!"];
-  for (let i = 0; i < texts.length; i++) {
-    announcement.textContent = texts[i];
-    // announcement.style.opacity = "1";
+    this.userHand.stopShaking();
+    this.computerHand.stopShaking();
+  }
 
-    if (i < 4) {
-      playerImg.classList.add("player-shake");
-      computerImg.classList.add("computer-shake");
+  setChoices(userChoice, computerChoice) {
+    this.userHand.choice = userChoice;
+    this.computerHand.choice = computerChoice;
+  }
+
+  revealChoices() {
+    this.userHand.revealChoice();
+    this.userHand.bounce();
+    this.computerHand.revealChoice();
+    this.computerHand.bounce();
+  }
+
+  reset() {
+    this.userHand.reset();
+    this.computerHand.reset();
+  }
+}
+
+class Choice {
+  constructor(name, displayName, onClick) {
+    this.name = name;
+    this.key = name.toUpperCase();
+    this.displayName = displayName;
+    this.tooltipElement = document.getElementById("instruction");
+    this.containerElement = document.getElementById(name);
+    this.containerElement.addEventListener("click", onClick);
+    this.containerElement.addEventListener("mouseenter", () =>
+      this.showTooltip()
+    );
+    this.containerElement.addEventListener("mouseleave", () =>
+      this.hideTooltip()
+    );
+  }
+
+  showTooltip() {
+    this.tooltipElement.textContent = this.displayName;
+  }
+
+  hideTooltip() {
+    this.tooltipElement.textContent = "Válassz kezet!";
+  }
+}
+
+class ChoicesManager {
+  constructor(onChoice) {
+    this.containerElement = document.getElementById("choicesBox");
+    this.instructionsElement = document.getElementById("instruction");
+
+    const choiceRock = new Choice("choiceRock", "Kő", () =>
+      onChoice(choiceMap[ChoiceKey.ROCK])
+    );
+    const choicePaper = new Choice("choicePaper", "Papír", () =>
+      onChoice(choiceMap[ChoiceKey.PAPER])
+    );
+    const choiceScissors = new Choice("choiceScissors", "Olló", () =>
+      onChoice(choiceMap[ChoiceKey.SCISSORS])
+    );
+
+    this.choices = [choiceRock, choicePaper, choiceScissors];
+  }
+
+  show() {
+    this.containerElement.style.display = "flex";
+    this.instructionsElement.style.display = "flex";
+  }
+
+  hide() {
+    this.containerElement.style.display = "none";
+    this.instructionsElement.style.display = "none";
+  }
+}
+
+class EmojiCollection {
+  constructor(emojis) {
+    this.emojis = emojis;
+    this.index = -1;
+  }
+
+  getNext() {
+    const nextEmoji = this.emojis?.[++this.index];
+    const lastEmoji = this.emojis[this.emojis.length - 1];
+
+    return nextEmoji ?? lastEmoji;
+  }
+
+  reset() {
+    this.index = -1;
+  }
+}
+
+class EmojiManager {
+  constructor() {
+    this.winningEmojis = new EmojiCollection(["😊", "😁👍", "😎👌"]);
+    this.losingEmojis = new EmojiCollection(["😳", "😨", "😞💔"]);
+    this.tieEmojis = new EmojiCollection(["😐", "😒", "🥱", "😴", "😵‍💫"]);
+  }
+
+  reset() {
+    this.winningEmojis.reset();
+    this.losingEmojis.reset();
+    this.tieEmojis.reset();
+  }
+}
+
+class GameContext {
+  constructor() {
+    this.config = {
+      maxWinCount: 3,
+    };
+    this.DEFAULT_STATS = {
+      tieCount: 0,
+      userWinCount: 0,
+      computerWinCount: 0,
+    };
+    this.stats = {
+      ...this.DEFAULT_STATS,
+    };
+  }
+
+  get userWinsCounterElement() {
+    return document.getElementById("userWinsCounter");
+  }
+
+  get computerWinsCounterElement() {
+    return document.getElementById("computerWinsCounter");
+  }
+
+  incrementUserWins() {
+    this.stats.userWinCount++;
+    this.refreshCounters();
+  }
+
+  incrementComputerWins() {
+    this.stats.computerWinCount++;
+    this.refreshCounters();
+  }
+
+  hasUserWon() {
+    return this.stats.userWinCount >= this.config.maxWinCount;
+  }
+
+  hasComputerWon() {
+    return this.stats.computerWinCount >= this.config.maxWinCount;
+  }
+
+  incrementTies() {
+    this.stats.tieCount++;
+  }
+
+  isGameFinished() {
+    return this.hasUserWon() || this.hasComputerWon();
+  }
+
+  resetStats() {
+    this.stats = { ...this.DEFAULT_STATS };
+    this.refreshCounters();
+  }
+
+  refreshCounters() {
+    this.userWinsCounterElement.textContent = `${this.stats.userWinCount}/${this.config.maxWinCount}`;
+    this.computerWinsCounterElement.textContent = `${this.stats.computerWinCount}/${this.config.maxWinCount}`;
+  }
+}
+
+class GameEngine {
+  constructor() {
+    this.context = new GameContext();
+    this.hands = new HandsManager();
+    this.choices = new ChoicesManager((choice) => this.playRound(choice));
+    this.announcement = document.getElementById("announcement");
+    this.actionsBox = document.getElementById("actionsBox");
+    this.newGameButton = document.getElementById("newGameButton");
+    this.newGameButton.addEventListener("click", () => this.resetGame());
+    this.userChoice = null;
+    this.computerChoice = null;
+    this.emojis = new EmojiManager();
+  }
+
+  async playRound(userChoice) {
+    this.choices.hide();
+    this.hands.reset();
+
+    this.userChoice = userChoice;
+    this.computerChoice = Util.getRandom(CHOICES);
+    this.hands.setChoices(this.userChoice, this.computerChoice);
+
+    const texts = ["Kő...", "Papír...", "Ol...", "...ló!"];
+    for (let i = 0; i < texts.length; i++) {
+      this.announce(texts[i]);
+
+      await this.hands.shake();
+      await Util.sleep(150);
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 600));
-
-    playerImg.classList.remove("player-shake");
-    computerImg.classList.remove("computer-shake");
-    // announcement.style.opacity = "0";
-
-    if (i < texts.length - 1) await new Promise((r) => setTimeout(r, 200));
+    this.hands.revealChoices();
+    this.displayRoundWinner();
   }
 
-  // 4. Reveal final choices with a nice bounce
-  playerImg.src = getImagePath(`player-${playerChoice.image}`);
-  computerImg.src = getImagePath(`computer-${computerChoice.image}`);
+  displayRoundWinner() {
+    const userWonRound = this.userChoice.beats === this.computerChoice.key;
+    const computerWonRound = this.computerChoice.beats === this.userChoice.key;
 
-  playerImg.style.transform = "scale(1.2)";
-  computerImg.style.transform = "scale(1.2)";
-  setTimeout(() => {
-    playerImg.style.transform = "";
-    computerImg.style.transform = "";
-  }, 300);
+    if (userWonRound) {
+      this.context.incrementUserWins();
+      this.hands.userHand.markAsWinner();
+      const emoji = this.emojis.winningEmojis.getNext();
+      this.announce(`Nyertél! ${emoji}`);
+    } else if (computerWonRound) {
+      this.context.incrementComputerWins();
+      this.hands.computerHand.markAsWinner();
+      const emoji = this.emojis.losingEmojis.getNext();
+      this.announce(`Vesztettél! ${emoji}`);
+    } else {
+      this.context.incrementTies();
+      const emoji = this.emojis.tieEmojis.getNext();
+      this.announce(`Döntetlen! ${emoji}`);
+    }
 
-  // 5. Determine winner, etc.
-  choicesBox.style.opacity = 1;
-  determineWinner(playerChoice, computerChoice);
-}
-
-function getRandom(array) {
-  return array[Math.floor(Math.random() * array.length)];
-}
-
-// Example player choice (replace with real buttons or whatever)
-function getPlayerChoice() {
-  return getRandom(choiceMap);
-}
-
-function determineWinner(playerChoice, computerChoice) {
-  let winnerHandArea = null;
-  let winnerWinsCounter = null;
-
-  if (playerChoice.beats === computerChoice.key) {
-    winnerHandArea = playerHandArea;
-    winnerWinsCounter = playerWinsCounter;
-    context.playerWins++;
-
-    const emoji = emojiByResult.WINS[context.playerWins];
-    announcement.innerHTML = `Nyertél! ${emoji}`;
-  } else if (computerChoice.beats === playerChoice.key) {
-    winnerHandArea = computerHandArea;
-    winnerWinsCounter = computerWinsCounter;
-    context.computerWins++;
-
-    const emoji = emojiByResult.LOSES[context.computerWins];
-    announcement.innerHTML = `Vesztettél!  ${emoji}`;
-  } else {
-    context.ties++;
-
-    const emoji = emojiByResult.TIES?.[context.ties] ?? "💤";
-    announcement.innerHTML = `Döntetlen!  ${emoji}`;
+    this.checkEndGame();
   }
 
-  if (winnerHandArea && winnerWinsCounter) {
-    winnerHandArea.classList.add("winner-hand");
-    updateUi();
+  checkEndGame() {
+    if (this.context.isGameFinished()) {
+      this.showActions();
+    } else {
+      this.choices.show();
+    }
+  }
+
+  showActions() {
+    this.actionsBox.style.opacity = 1;
+    this.actionsBox.style.display = "flex";
+  }
+
+  hideActions() {
+    this.actionsBox.style.opacity = 0;
+    this.actionsBox.style.display = "none";
+  }
+
+  resetGame() {
+    this.hideActions();
+    this.context.resetStats();
+    this.hands.reset();
+    this.choices.show();
+    this.emojis.reset();
+    this.announce("Készen állsz?");
+  }
+
+  announce(text) {
+    this.announcement.textContent = text;
   }
 }
 
-// Hook up button
-newGameButton.addEventListener("click", resetGame);
-choiceRock.addEventListener("click", () => {
-  playRound(choiceMap[ChoiceKey.ROCK]);
-});
-choicePaper.addEventListener("click", () => {
-  playRound(choiceMap[ChoiceKey.PAPER]);
-});
-choiceScissors.addEventListener("click", () => {
-  playRound(choiceMap[ChoiceKey.SCISSORS]);
-});
+const engine = new GameEngine();
 
-window.onload = resetGame;
+window.onload = () => engine.resetGame();

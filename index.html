@@ -13,45 +13,42 @@
   <body>
     <main>
       <div class="game-banner">
-        <span>Kő - Papír - Olló</span>
+        <span class="title">KPO</span>
+        <span class="subtitle">David Buzas | GitHub</span>
       </div>
       <div class="game-area">
         <div class="spacing"></div>
-        <div class="announcement" id="announcement">Készen állsz?</div>
+        <div class="announcements-area">
+          <span id="announcement">Készen állsz?</span>
+        </div>
 
         <div class="hands-area">
           <div class="profile bordered">
             <div class="title">Játékos</div>
-            <img
-              id="playerProfileImage"
-              src="public/images/player-profile.png"
-            />
+            <img src="public/images/user-profile.png" />
             <div class="stats-area">
-              <span id="playerWinsCounter">0/0</span>
+              <span id="userWinsCounter">0/0</span>
               <img src="public/images/wins-badge.png" />
             </div>
           </div>
-          <div id="playerHandArea" class="player-hand">
+          <div id="userHandBox" class="user-hand">
             <img
-              id="playerImg"
-              src="public/images/player-hand-rock.png"
-              alt="Player"
+              id="userHandImg"
+              src="public/images/user-hand-rock.png"
+              alt="Játékos"
             />
           </div>
 
-          <div id="computerHandArea" class="computer-hand">
+          <div id="computerHandBox" class="computer-hand">
             <img
-              id="computerImg"
+              id="computerHandImg"
               src="public/images/computer-hand-rock.png"
-              alt="Computer"
+              alt="Számítógép"
             />
           </div>
           <div class="profile bordered">
             <div class="title">Számítógép</div>
-            <img
-              id="computerProfileImage"
-              src="public/images/computer-profile.png"
-            />
+            <img src="public/images/computer-profile.png" />
             <div class="stats-area">
               <span id="computerWinsCounter">0/0</span>
               <img src="public/images/wins-badge.png" />
@@ -70,6 +67,10 @@
         <div id="choiceScissors" class="choice">
           <img src="public/images/choice-scissor.png" />
         </div>
+      </div>
+
+      <div id="instructionsBox" class="instructions-area">
+        <span id="instruction">Válassz kezet!</span>
       </div>
 
       <div id="actionsBox" class="actions-area">

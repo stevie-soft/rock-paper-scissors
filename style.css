@@ -14,6 +14,7 @@ body {
 
 .game-banner {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: var(--banner-color);
@@ -21,9 +22,14 @@ body {
   box-shadow: 3px 5px 40px 10px #181818;
 }
 
-.game-banner span {
+.game-banner .title {
   color: var(--text-color);
-  font-size: 5rem;
+  font-size: 2rem;
+}
+
+.game-banner .subtitle {
+  color: var(--text-color);
+  font-size: 1rem;
 }
 
 .game-area {
@@ -31,6 +37,18 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.announcements-area {
+  pointer-events: none;
+  transition: 0.1s ease-out;
+  line-height: 100px;
+}
+
+.announcements-area span {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--text-color);
 }
 
 .hands-area {
@@ -45,18 +63,32 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
 }
 
 .choice img {
   width: 75px;
   height: 75px;
   transition: 0.1s all;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 .choice img:hover {
   cursor: pointer;
   transform: scale(1.4);
+}
+
+.instructions-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.instructions-area span {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--text-color);
 }
 
 .actions-area {
@@ -66,7 +98,7 @@ body {
   gap: 40px;
 }
 
-.player-hand img,
+.user-hand img,
 .computer-hand img {
   width: 200px;
   height: 200px;
@@ -112,15 +144,15 @@ body {
   height: 50px;
 }
 
-.player-shake {
-  animation: player-shake 0.5s ease-in-out;
+.user-shake {
+  animation: user-shake 0.5s ease-in-out;
 }
 
 .computer-shake {
   animation: computer-shake 0.5s ease-in-out;
 }
 
-@keyframes player-shake {
+@keyframes user-shake {
   0% {
     transform: translateY(0) translateX(0px) rotate(0deg);
   }
@@ -148,16 +180,6 @@ body {
   100% {
     transform: translateY(0) translateX(0px) rotate(0deg);
   }
-}
-
-/* Big countdown text */
-.announcement {
-  font-size: 4rem;
-  font-weight: bold;
-  color: var(--text-color);
-  pointer-events: none;
-  transition: 0.1s ease-out;
-  line-height: 100px;
 }
 
 .bordered {
@@ -193,11 +215,5 @@ body {
 #newGameButton:hover {
   cursor: pointer;
   background-color: var(--banner-color);
-  color: var(--text-color);
-}
-
-#newGameButton:disabled {
-  cursor: progress;
-  background-color: var(--bg-color);
   color: var(--text-color);
 }
