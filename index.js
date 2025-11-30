@@ -291,7 +291,10 @@ class GameEngine {
       this.announce(texts[i]);
 
       await this.hands.shake();
-      await Util.sleep(150);
+
+      if (i < texts.length - 1) {
+        await Util.sleep(150);
+      }
     }
 
     this.hands.revealChoices();
