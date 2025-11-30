@@ -107,8 +107,8 @@ class HandsManager {
 
   revealChoices() {
     this.userHand.revealChoice();
-    this.userHand.bounce();
     this.computerHand.revealChoice();
+    this.userHand.bounce();
     this.computerHand.bounce();
   }
 
